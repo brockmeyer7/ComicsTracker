@@ -14,8 +14,8 @@ def index(request):
     return HttpResponse(json.dumps(result))
 
 def character_lookup():
-    ts, public_key, hash = api_auth()
-    api_url = 'https://gateway.marvel.com:443/v1/public/characters?ts=' + ts + '&apikey=' + public_key + '&hash=' + hash.hexdigest()
+    auth_string = api_auth()
+    api_url = 'https://gateway.marvel.com:443/v1/public/characters?' + auth_string
     response = requests.get(api_url)
     return json.dumps(response.json())
 
@@ -27,5 +27,5 @@ def api_auth():
     gmt = time.gmtime()
     ts = str(calendar.timegm(gmt))
     hash = hashlib.md5((ts+private_key+public_key).encode())
-    return ts, public_key, hash
+    return ('ts=' + ts + '&apikey=' + public_key + '&hash=' + hash.hexdigest())
 
