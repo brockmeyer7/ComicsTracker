@@ -6,22 +6,30 @@ import requests, json
 import os
 from dotenv import load_dotenv
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from django.views.decorators.http import require_http_methods
 
 def index(request):
-    result = []
-    threads=[]
-    with ThreadPoolExecutor(max_workers=20) as executor:
-        for i in range(20):
-            threads.append(executor.submit(character_lookup, i * 100))
-            
-        for task in as_completed(threads):
-            for item in json.loads(task.result())['data']['results']:
-                result.append(item['name'])
-    return HttpResponse(json.dumps(result))
+    return HttpResponse("Hello World!")
 
-def character_lookup(offset):
+@require_http_methods(['GET'])
+def book(request):
+    if request.method == 'GET':
+        pass
+
+@require_http_methods(['GET'])
+def character(request, name: str):
+    if request.method == 'GET':
+        result = {}
+        api_response = json.loads(character_lookup(name))
+        print(api_response['data']['results'][0]['name'])
+        # result['id'] = api_response['data']['results']['id']
+        # result['name'] = api_response['data']['results']['name']
+        # result['description'] = api_response['data']['results']['description']
+        return HttpResponse(character_lookup(name))
+
+def character_lookup(name: str):
     auth_string = api_auth()
-    api_url = 'https://gateway.marvel.com:443/v1/public/characters?limit=100&offset=' + str(offset) + '&' + auth_string
+    api_url = 'https://gateway.marvel.com:443/v1/public/characters?name=' + name + '&' + auth_string
     response = requests.get(api_url)
     return json.dumps(response.json())
 
