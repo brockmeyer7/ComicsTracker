@@ -11,17 +11,17 @@ from django.views.decorators.http import require_http_methods
 def index(request):
     return HttpResponse("Hello World!")
 
-@require_http_methods(['GET', 'POST'])
+@require_http_methods(['GET'])
 def book(request, title: str, start_year: int, iss_start_num: int, iss_end_num: int):
     if request.method == 'GET':
         result = []
         api_response = json.loads(book_lookup(title, start_year, iss_start_num, iss_end_num))
         for item in api_response:
             item_dict = {}
-            item_dict['id'] = item['id']
-            result['issue_num'] = api_response['issueNumber']
-            item_dict['title'] = item['title']
-            item_dict['description'] = item['description']
+            item_dict['id'] = item['data']['results'][0]['id']
+            item_dict['issue_num'] = item['data']['results'][0]['issueNumber']
+            item_dict['title'] = item['data']['results'][0]['title']
+            item_dict['description'] = item['data']['results'][0]['description']
             result.append(item_dict)
         return HttpResponse(json.dumps(result))
 
@@ -42,14 +42,14 @@ def character_lookup(name: str):
     response = requests.get(api_url)
     return json.dumps(response.json())
 
-def book_lookup(title: str, start_date: int, iss_start_num: int, iss_end_num: int):
+def book_lookup(title: str, start_year: int, iss_start_num: int, iss_end_num: int):
     auth_string = api_auth()
-    api_url = 'https://gateway.marvel.com:443/v1/public/comics?' + auth_string + '&title=' + title + '&startDate=' + str(start_date)
+    api_url = 'https://gateway.marvel.com:443/v1/public/comics?' + auth_string + '&title=' + title + '&startYear=' + str(start_year)
     result = []
     for i in range(iss_start_num, iss_end_num + 1):
         response = requests.get(api_url + '&issueNumber=' + str(i))
-        result.append(response)
-    return json.dumps(result.json())       
+        result.append(response.json())
+    return json.dumps(result)       
 
 def api_auth():
     dotenv_path = os.path.expanduser('~/Documents/Personal_Projects/.env')
