@@ -7,6 +7,7 @@ import os
 from dotenv import load_dotenv
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from django.views.decorators.http import require_http_methods
+import mokkari
 
 def index(request):
     return HttpResponse("Hello World!")
@@ -60,3 +61,18 @@ def api_auth():
     ts = str(calendar.timegm(gmt))
     hash = hashlib.md5((ts+private_key+public_key).encode())
     return ('ts=' + ts + '&apikey=' + public_key + '&hash=' + hash.hexdigest())
+
+if __name__ == '__main__':
+    dotenv_path = os.path.expanduser('~/Documents/Personal_Projects/.env')
+    load_dotenv(dotenv_path)
+    username = os.getenv('METRON_USERNAME')
+    password = os.getenv('METRON_PASSWORD')
+    m = mokkari.api(username, password)
+    this_week = m.issues_list({"store_date_range_after": "2023-02-27", "store_date_range_before": "2023-03-6", "publisher_name": "marvel"})
+
+    for i in this_week:
+        print(f"{i.id} {i.issue_name}")
+    
+    asm_68 = m.issue(31660)
+    print(asm_68.desc)
+                    
