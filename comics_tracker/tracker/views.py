@@ -13,18 +13,12 @@ def index(request):
     return HttpResponse("Hello World!")
 
 @require_http_methods(['GET'])
-def book(request, title: str, start_year: int, iss_start_num: int, iss_end_num: int):
-    if request.method == 'GET':
-        result = []
-        api_response = json.loads(book_lookup(title, start_year, iss_start_num, iss_end_num))
-        for item in api_response:
-            item_dict = {}
-            item_dict['id'] = item['data']['results'][0]['id']
-            item_dict['issue_num'] = item['data']['results'][0]['issueNumber']
-            item_dict['title'] = item['data']['results'][0]['title']
-            item_dict['description'] = item['data']['results'][0]['description']
-            result.append(item_dict)
-        return HttpResponse(json.dumps(result))
+def book(request, series_name: str, series_year_began: int, iss_num_start: int, iss_num_end: int):
+    m = api_auth()
+    result = []
+    for i in range(iss_num_start, iss_num_end + 1):
+        result.append(m.issues_list({'series_name': series_name, 'series_year_began': series_year_began, 'number': i}))
+    return HttpResponse('All good')
 
 
 @require_http_methods(['GET'])
@@ -43,36 +37,25 @@ def character_lookup(name: str):
     response = requests.get(api_url)
     return json.dumps(response.json())
 
-def book_lookup(title: str, start_year: int, iss_start_num: int, iss_end_num: int):
-    auth_string = api_auth()
-    api_url = 'https://gateway.marvel.com:443/v1/public/comics?' + auth_string + '&title=' + title + '&startYear=' + str(start_year)
-    result = []
-    for i in range(iss_start_num, iss_end_num + 1):
-        response = requests.get(api_url + '&issueNumber=' + str(i))
-        result.append(response.json())
-    return json.dumps(result)       
-
 def api_auth():
-    dotenv_path = os.path.expanduser('~/Documents/Personal_Projects/.env')
-    load_dotenv(dotenv_path)
-    public_key = os.getenv('MARVEL_PUBLIC_KEY')
-    private_key = os.getenv('MARVEL_PRIVATE_KEY')
-    gmt = time.gmtime()
-    ts = str(calendar.timegm(gmt))
-    hash = hashlib.md5((ts+private_key+public_key).encode())
-    return ('ts=' + ts + '&apikey=' + public_key + '&hash=' + hash.hexdigest())
-
-if __name__ == '__main__':
     dotenv_path = os.path.expanduser('~/Documents/Personal_Projects/.env')
     load_dotenv(dotenv_path)
     username = os.getenv('METRON_USERNAME')
     password = os.getenv('METRON_PASSWORD')
     m = mokkari.api(username, password)
-    this_week = m.issues_list({"store_date_range_after": "2023-02-27", "store_date_range_before": "2023-03-6", "publisher_name": "marvel"})
+    return m
 
-    for i in this_week:
-        print(f"{i.id} {i.issue_name}")
-    
-    asm_68 = m.issue(31660)
-    print(asm_68.desc)
+if __name__ == '__main__':
+    m = api_auth()
+    iss_id = []
+    response = m.issues_list({'series_name': 'Black Widow', 'series_year_began': 2014})
+    for item in response:
+        iss_id.append(item.id)
+    start_iss_num = 1
+    end_iss_num = 5
+    num_issues = end_iss_num - start_iss_num + 1
+    first_iss = m.issues_list({'series_name': 'Black Widow', 'series_year_began': 2014, 'number': start_iss_num})
+    start_idx = iss_id.index(first_iss.issues[0].id)
+    for i in range(start_idx, start_idx + num_issues):
+        print(m.issue(iss_id[i]).number)
                     
