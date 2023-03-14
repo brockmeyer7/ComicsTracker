@@ -8,17 +8,17 @@ from dotenv import load_dotenv
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from django.views.decorators.http import require_http_methods
 import mokkari
+from mokkari_api import MokkariSession
+
+m = MokkariSession()
 
 def index(request):
     return HttpResponse("Hello World!")
 
-@require_http_methods(['GET'])
+@require_http_methods(['GET', 'POST'])
 def book(request, series_name: str, series_year_began: int, iss_num_start: int, iss_num_end: int):
-    m = api_auth()
-    result = []
-    for i in range(iss_num_start, iss_num_end + 1):
-        result.append(m.issues_list({'series_name': series_name, 'series_year_began': series_year_began, 'number': i}))
-    return HttpResponse('All good')
+    if request.method == 'POST':
+        m.iss_list_lookup(series_name=series_name, series_year_began=series_year_began)
 
 
 @require_http_methods(['GET'])
@@ -46,16 +46,25 @@ def api_auth():
     return m
 
 if __name__ == '__main__':
-    m = api_auth()
+    m = MokkariSession()
+    series_name = 'Thor'
     iss_id = []
-    response = m.issues_list({'series_name': 'Black Widow', 'series_year_began': 2014})
-    for item in response:
-        iss_id.append(item.id)
-    start_iss_num = 1
-    end_iss_num = 5
-    num_issues = end_iss_num - start_iss_num + 1
-    first_iss = m.issues_list({'series_name': 'Black Widow', 'series_year_began': 2014, 'number': start_iss_num})
-    start_idx = iss_id.index(first_iss.issues[0].id)
-    for i in range(start_idx, start_idx + num_issues):
-        print(m.issue(iss_id[i]).number)
+    series = api_auth().series_list()
+    for item in series:
+        print(item.series)
+        # if item.name[0:len(series_name)] == series_name:
+        #     series_id = item.id
+        #     break
+    # response = m.iss_list_lookup(series_name, 2018)
+    # for item in response:
+    #     if item.issue_name[0:len(series_name)] == series_name:
+    #         iss_id.append(item.id)
+    # start_iss_num = 1
+    # end_iss_num = 4
+    # num_issues = end_iss_num - start_iss_num + 1
+    # first_iss = api_auth().issues_list({'series_id': series_id, 'series_year_began': 2018, 'number': start_iss_num})
+    # start_idx = iss_id.index(first_iss.issues[0].id)
+    # for i in range(start_idx, start_idx + num_issues):
+    #     issue = m.single_issue(iss_id[i])
+    #     print(issue.id, issue.series.name, issue.number)
                     
