@@ -35,20 +35,20 @@ class ComicVine():
             return response['status_code']
 
 
-    def get_volume(self, name: str, start_year: str, *args):
-        url = f'{self.api_url}volumes/{self.api_key}&format=json&filter=name:{urllib.parse.quote(name)}&field_list='
+    def get_series(self, name: str, limit: int=20, offset: int=0, *args):
+        url = f'{self.api_url}volumes/{self.api_key}&format=json&limit={str(limit)}&offset={offset}&filter=name:{urllib.parse.quote(name)}&field_list='
         for i in range(len(args)):
             if i == 0:
                 url += args[i]
             else:
                 url += ',' + args[i]
-        response = requests.get(url, headers=self.headers).json()
+        try:
+            response = requests.get(url, headers=self.headers).json()
+        except:
+            return -1
+        
         if response['status_code'] == 1:
-            result = []
-            for item in response['results']:
-                if item['start_year'] == start_year and item['name'] == name:
-                    result.append(item)
-            return json.dumps(item)
+            return json.dumps(response)
         else:
             return response['status_code']
         

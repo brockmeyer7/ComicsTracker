@@ -15,17 +15,21 @@ def index(request):
     return HttpResponse("Hello World!")
 
 @require_http_methods(['GET', 'POST'])
-def book(request):
+def search_series(request):
+    if request.method =='GET':
+        return render(request, 'search_series.html')
+    
     if request.method == 'POST':
-        body_unicode = request.body.decode('utf-8')
-        body = json.loads(body_unicode)
-        series_name = body['name']
-        start_year = body['start_year']
+        series_name = request.POST['series_name']
+        # limit = body['limit']
+        if 'offset' in request.POST:
+            offset = request.POST['offset']
+        else:
+            offset = 0
 
-        response = cv.get_volume(series_name, start_year, 'id', 'name', 'start_year', 'first_issue', 'last_issue')
-        data = json.loads(response)
+        response = cv.get_series(series_name, offset, 'id', 'name', 'description')
+        series = json.loads(response)
 
-
-        return HttpResponse(str(data))
+        return HttpResponse(str(series))
     
                     
