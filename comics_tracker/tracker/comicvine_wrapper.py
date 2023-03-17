@@ -35,18 +35,25 @@ class ComicVine():
             return response['status_code']
 
 
-    def get_volume(self, **kwargs):
-        url = f'{self.api_url}volumes/{self.api_key}'
-        name = urllib.parse.quote(kwargs['name'])
-        url += f'&filter=name:{name}&format=json'
+    def get_volume(self, name: str, start_year: str, *args):
+        url = f'{self.api_url}volumes/{self.api_key}&format=json&filter=name:{urllib.parse.quote(name)}&field_list='
+        for i in range(len(args)):
+            if i == 0:
+                url += args[i]
+            else:
+                url += ',' + args[i]
         response = requests.get(url, headers=self.headers).json()
         if response['status_code'] == 1:
-            return json.dumps(response)
+            result = []
+            for item in response['results']:
+                if item['start_year'] == start_year and item['name'] == name:
+                    result.append(item)
+            return json.dumps(item)
         else:
             return response['status_code']
         
 
 if __name__ == '__main__':
     cv = ComicVine()
-    response = json.loads(cv.search(query='Black Widow', resources='volume'))
+    response = json.loads(cv.get_volume(name='Black Widow'))
     print(response)
