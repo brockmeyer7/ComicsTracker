@@ -35,13 +35,15 @@ class ComicVine():
             return response['status_code']
 
 
-    def get_series(self, name: str, limit: int=20, offset: int=0, *args):
+    def get_series(self, name: str, offset: int = 0, limit: int = 20, params: list=[]):
         url = f'{self.api_url}volumes/{self.api_key}&format=json&limit={str(limit)}&offset={offset}&filter=name:{urllib.parse.quote(name)}&field_list='
-        for i in range(len(args)):
+        print(url)
+        print(limit)
+        for i in range(len(params)):
             if i == 0:
-                url += args[i]
+                url += params[i]
             else:
-                url += ',' + args[i]
+                url += ',' + params[i]
         try:
             response = requests.get(url, headers=self.headers).json()
         except:

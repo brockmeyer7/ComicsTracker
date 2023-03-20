@@ -1,11 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-import hashlib
-import calendar, time
-import requests, json
-import os
-from dotenv import load_dotenv
-from concurrent.futures import ThreadPoolExecutor, as_completed
+import json
+from concurrent.futures import as_completed
 from django.views.decorators.http import require_http_methods
 from tracker import comicvine_wrapper, models
 
@@ -27,9 +23,9 @@ def search_series(request):
         else:
             offset = 0
 
-        response = cv.get_series(series_name, offset, 'id', 'name', 'description')
-        series = json.loads(response)
+        response = cv.get_series(name=series_name, offset=offset, params=['id', 'name', 'description', 'image'])
+        results = json.loads(response)
 
-        return HttpResponse(str(series))
+        return render(request, 'series_results.html', results)
     
                     
