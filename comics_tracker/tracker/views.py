@@ -17,15 +17,19 @@ def search_series(request):
     
     if request.method == 'POST':
         series_name = request.POST['series_name']
-        # limit = body['limit']
         if 'offset' in request.POST:
             offset = request.POST['offset']
         else:
             offset = 0
 
-        response = cv.get_series(name=series_name, offset=offset, params=['id', 'name', 'description', 'image'])
+        response = cv.get_series(name=series_name, offset=offset, params=['id', 'name', 'image', 'start_year', 'publisher'])
         results = json.loads(response)
 
         return render(request, 'series_results.html', results)
-    
-                    
+
+@require_http_methods(["GET"]) 
+def series_issues(request, id):
+    response = cv.get_issues(volume=id)
+    results = json.loads(response)
+    return render(request, 'series_issues.html', results)
+
