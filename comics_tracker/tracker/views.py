@@ -24,8 +24,15 @@ def search_series(request):
 
         response = cv.get_series(name=series_name, offset=offset, params=['id', 'name', 'image', 'start_year', 'publisher'])
         results = json.loads(response)
+        
+        if request.POST['start_year'] != '':
+            results = cv.filter_start_year(request.POST['start_year'], results['results'])
+        if request.POST['publisher'] != '':
+            results = cv.filter_publisher(request.POST['publisher'], results['results'])
 
-        return render(request, 'series_results.html', results)
+        results_dict = {'results': results}
+
+        return render(request, 'series_results.html', results_dict)
 
 @require_http_methods(["GET"]) 
 def series_issues(request, id):

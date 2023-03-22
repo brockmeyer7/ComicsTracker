@@ -64,9 +64,9 @@ class ComicVine():
     def filter_publisher(self, publisher: str, unfilt_list: list):
         results = []
         for item in unfilt_list:
-            if item['publisher'] == publisher:
+            if item['publisher']['name'] == publisher:
                 results.append(item)
-            return results
+        return results
 
 if __name__ == '__main__':
     cv = ComicVine()
