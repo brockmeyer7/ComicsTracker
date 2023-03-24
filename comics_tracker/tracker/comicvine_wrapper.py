@@ -27,7 +27,7 @@ class ComicVine():
         url = f'{self.api_url}/issues/{self.api_key}&filter='
         for k, v in kwargs.items():
             url += f'{k}:{urllib.parse.quote(v)}'
-        url += '&format=json&limit=20'
+        url += '&format=json'
         print(url)
         response = requests.get(url, headers=self.headers).json()
         if response['status_code'] == 1:
@@ -37,7 +37,7 @@ class ComicVine():
 
 
     def get_series(self, name: str, offset: int = 0, limit: int = 20, params: list=[]):
-        url = f'{self.api_url}/volumes/{self.api_key}&format=json&limit={str(limit)}&offset={offset}&filter=name:{urllib.parse.quote(name)}&field_list='
+        url = f'{self.api_url}/volumes/{self.api_key}&format=json&offset={offset}&filter=name:{urllib.parse.quote(name)}&field_list='
         print(url)
         for i in range(len(params)):
             if i == 0:

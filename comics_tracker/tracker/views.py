@@ -22,13 +22,16 @@ def search_series(request):
         else:
             offset = 0
 
-        response = cv.get_series(name=series_name, offset=offset, params=['id', 'name', 'image', 'start_year', 'publisher'])
-        results = json.loads(response)
+        print(request.POST)
+        response = cv.get_series(name=series_name, offset=offset, params=['id', 'name', 'image', 'start_year', 'publisher', 'first_issue', 'last_issue'])
+        results = json.loads(response)['results']
         
         if request.POST['start_year'] != '':
-            results = cv.filter_start_year(request.POST['start_year'], results['results'])
-        if request.POST['publisher'] != '':
-            results = cv.filter_publisher(request.POST['publisher'], results['results'])
+            results = cv.filter_start_year(request.POST['start_year'], results)
+        elif request.POST['publisher'] != '':
+            results = cv.filter_publisher(request.POST['publisher'], results)
+        else:
+            results = results
 
         results_dict = {'results': results}
 
