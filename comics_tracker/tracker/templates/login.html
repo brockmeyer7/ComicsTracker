@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+<form action="/search_series" method="post">
+    <div>
+        <input type="text" id="username" name="username" placeholder="Username">
+    </div>
+    <div>
+        <input type="text" id="password" name="password" placeholder="Password">
+    </div>
+    <div>
+        <button type="submit">Submit</button>
+    </div>
+</form>
+{% endblock %}

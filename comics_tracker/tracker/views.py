@@ -1,14 +1,19 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 import json
-from concurrent.futures import as_completed
 from django.views.decorators.http import require_http_methods
 from tracker import comicvine_wrapper, models
 
 cv = comicvine_wrapper.ComicVine()
 
 def index(request):
-    return HttpResponse("Hello World!")
+    return render(request, 'base.html')
+
+@require_http_methods(['GET', 'POST'])
+def login(request):
+    if request.method=='GET':
+        return render(request, 'login.html')
+
 
 @require_http_methods(['GET', 'POST'])
 def search_series(request):
@@ -33,7 +38,7 @@ def search_series(request):
         else:
             results = results
 
-        results_dict = {'results': results}
+        results_dict = {'results': results, 'offset': offset, 'series_name': series_name}
 
         return render(request, 'series_results.html', results_dict)
 
