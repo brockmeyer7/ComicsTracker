@@ -1,9 +1,15 @@
 {% extends "base.html" %}
 
 {% block content %}
+<div class="d-flex justify-content-center align-content-center flex-wrap" style="margin-top: 30px">
     {% for item in results %}
-        <a><img src='{{item.image.medium_url}}' style="width:200px"></a>
+        <span class="d-inline-block text-center">
+            <img src="{{item.image.medium_url}}" style="width:250px" class="image-fluid p-2">
+            <p class="text-truncate" style="max-width: 250px; overflow: wrap; text-overflow: ellipsis;">{{item.name}}</p>
+            <p>#{{item.issue_number}}</p>
+        </span>
     {% empty %}
         <p>No items found.</p>
     {% endfor %}
+</div>
 {% endblock %}

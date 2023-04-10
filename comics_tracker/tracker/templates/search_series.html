@@ -1,18 +1,20 @@
 {% extends "base.html" %}
 
 {% block content %}
-<form action="/search_series" method="post">
-    <div>
-        <input type="text" id="series_name" name="series_name" placeholder="Series Name">
-    </div>
-    <div>
-        <input type="text" id="publisher" name="publisher" placeholder="Publisher">
-    </div>
-    <div>
-        <input type="number" id="start_year" name="start_year" placeholder="Series Start Year">
-    </div>
-    <div>
-        <button type="submit">Submit</button>
-    </div>
-</form>
+<div class="container text-center" style="margin-top: 200px">
+    <form action="/search_series" method="post">
+        <div>
+            <input type="text" id="series_name" name="series_name" placeholder="Series Name">
+        </div>
+        <div class="container" style="padding-top: 5px">
+            <input type="text" id="publisher" name="publisher" placeholder="Publisher">
+        </div>
+        <div class="container" style="padding-top: 5px">
+            <input type="number" id="start_year" name="start_year" placeholder="Start Year (Optional)">
+        </div>
+        <div class="container" style="padding-top: 5px">
+            <button type="submit">Submit</button>
+        </div>
+    </form>
+</div>
 {% endblock %}

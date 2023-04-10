@@ -56,7 +56,6 @@ def search_series(request):
         else:
             offset = 0
 
-        print(request.POST)
         response = cv.get_series(name=series_name, offset=offset, params=['id', 'name', 'image', 'start_year', 'publisher', 'first_issue', 'last_issue'])
         results = json.loads(response)['results']
         

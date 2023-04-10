@@ -1,18 +1,22 @@
 {% extends "base.html" %}
 
 {% block content %}
-<form action="/login" method="post">
-    <div>
-        <input type="text" id="username" name="username" placeholder="Username">
-    </div>
-    <div>
-        <input type="text" id="password" name="password" placeholder="Password">
-    </div>
-    <div>
-        <button type="submit">Submit</button>
-    </div>
-</form>
-<form action="/sign_up" method="GET">
-    <button type="submit">Create Account</button>
-</form>
+<div class="container text-center" style="margin-top: 200px">
+    <form action="/login" method="post">
+        <div>
+            <input type="text" id="username" name="username" placeholder="Username">
+        </div>
+        <div class="container" style="padding-top: 5px">
+            <input type="text" id="password" name="password" placeholder="Password">
+        </div>
+        <div class="container" style="padding-top: 5px">
+            <button type="submit">Login</button>
+        </div>
+    </form>
+    <form action="/sign_up" method="GET">
+        <div class="container" style="padding-top: 5px">
+            <button type="submit">Create Account</button>
+        </div>
+    </form>
+</div>
 {% endblock %}
