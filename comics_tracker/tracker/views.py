@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 import json
 from django.views.decorators.http import require_http_methods
 from tracker import comicvine_wrapper, models
@@ -77,3 +77,8 @@ def series_issues(request, id):
     results = json.loads(response)
     return render(request, 'series_issues.html', results)
 
+@ require_http_methods(['POST'])
+def add_issues(request):
+    response = request.body.decode('utf-8')
+    data = json.loads(response)
+    return JsonResponse({'success': True})

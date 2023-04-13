@@ -3,13 +3,16 @@
 {% block content %}
 <div class="d-flex justify-content-center align-content-center flex-wrap" style="margin-top: 30px">
     {% for item in results %}
-        <span class="d-inline-block text-center">
-            <img src="{{item.image.medium_url}}" style="width:250px" class="image-fluid p-2">
-            <p class="text-truncate" style="max-width: 250px; overflow: wrap; text-overflow: ellipsis;">{{item.name}}</p>
-            <p>#{{item.issue_number}}</p>
-        </span>
+    <span class="d-inline-block text-center">
+        <div class="container p-2" style="display:flex">
+            <img src="{{item.image.medium_url}}" style="width:250px; height:375px; object-fit:cover; cursor:pointer" class="image-fluid" data="{{item}}" onclick="addData.call(this)" role="button">
+        </div>
+        <p class="text-truncate" style="max-width: 250px; overflow: wrap; text-overflow: ellipsis;">{{item.name}}</p>
+        <p>#{{item.issue_number}}</p>
+    </span>
     {% empty %}
         <p>No items found.</p>
     {% endfor %}
+    <button type="button" onclick="sendIssues()">Submit</button>
 </div>
 {% endblock %}
