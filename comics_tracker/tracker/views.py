@@ -81,4 +81,5 @@ def series_issues(request, id):
 def add_issues(request):
     response = request.body.decode('utf-8')
     data = json.loads(response)
+    print(data)
     return JsonResponse({'success': True})

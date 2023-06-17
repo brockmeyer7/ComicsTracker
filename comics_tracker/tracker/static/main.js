@@ -1,38 +1,45 @@
 var selectedIssues = [];
+base_url = "http://127.0.0.1:8000/"
 
-function selectElement(element) {
+function selectIssue(issue) {
   // Toggle selection on the clicked element
-  element.classList.toggle('selected');
+  issue.classList.toggle('selected');
 
   // Check if the element is already selected
-  var index = selectedIssues.indexOf(element.textContent);
+  var index = selectedIssues.indexOf(issue.dataset.issue);
   if (index > -1) {
     // If selected, remove it from the array
     selectedIssues.splice(index, 1);
   } else {
     // If not selected, add it to the array
-    selectedIssues.push(element.textContent);
+    selectedIssues.push(issue.dataset.issue);
   }
 }
 
 $(document).ready(function () {
-  $('.element').click(function () {
-    selectElement(this);
-    console.log(selectedIssues);
+  $('.issue').click(function () {
+    selectIssue(this);
   });
 });
 
 function sendIssues() {
-  $.ajax({
-    url: '/add_issues',
-    type: 'POST',
-    data: {
-      'selected_issues': selectedIssues
+  fetch(base_url + "add_issues", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
     },
-    success: function () {
-      // Redirect the user to another page on the website
-      window.location.href = '/search_series/';
+    body: JSON.stringify(selectedIssues)
+  })
+  .then(response => {
+    // Handle the response
+    if (response.ok) {
+      console.log("POST request successful");
+    } else {
+      console.log("POST request failed");
     }
+  })
+  .catch(error => {
+    console.log("An error occurred:", error);
   });
 }
 
